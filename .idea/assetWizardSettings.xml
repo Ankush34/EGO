@@ -19,9 +19,20 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$PROJECT_DIR$/../../../Desktop/Ego/briefcase.png" />
-                                      <entry key="outputName" value="ic_user_login_password_icon" />
-                                      <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="imageAsset" value="$PROJECT_DIR$/../../../Downloads/phone.png" />
+                                      <entry key="outputName" value="ic_phone_number_signup_icon" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                            <entry key="launcherLegacy">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="$PROJECT_DIR$/../../../Desktop/imageedit_2_3703736063.png" />
                                     </map>
                                   </option>
                                 </PersistentState>

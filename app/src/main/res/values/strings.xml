@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ego</string>
+    <string name="facebook_app_id">324832988084985</string>
+    <string name="fb_login_protocol_scheme">fb324832988084985</string>
 </resources>
