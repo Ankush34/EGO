@@ -94,7 +94,7 @@
                             android:textSize="10dp"
                             android:id="@+id/forgot_password_text"
                             android:layout_below="@id/user_password_text"
-                            android:textColor="@color/colorBlack"
+                            android:textColor="@color/colorPrimary"
                             android:layout_marginTop="20dp"
                             android:text="Forgot My Password ? "/>
                         <ImageView
@@ -143,7 +143,7 @@
                             android:layout_width="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_below="@id/login_by_facebook_layout"
-                            android:layout_marginBottom="15dp"
+                            android:layout_marginBottom="10dp"
                             android:textSize="10dp"
                             android:id="@+id/not_a_user"
                             android:textColor="@color/colorPrimaryDark"
