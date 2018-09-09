@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:weightSum="2">
+    <RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+    android:layout_height="match_parent"
+        android:layout_weight="1">
+        <ImageView
+            android:layout_width="235dp"
+            android:layout_height="135dp"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/app_icon"/>
+    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </RelativeLayout>
+    </LinearLayout>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="180dp"
+        app:cardElevation="10dp"
+        app:cardCornerRadius="10dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="40dp"
+                android:drawablePadding="15dp"
+                android:textSize="10dp"
+                android:hint="Your Email Id"
+                android:inputType="textWebEmailAddress"
+                android:id="@+id/email"
+                android:drawableLeft="@drawable/ic_mail_icon_signup_screen"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:drawablePadding="15dp"
+                android:textSize="10dp"
+                android:hint="Your Password For Login"
+                android:id="@+id/password"
+                android:inputType="textWebPassword"
+                android:layout_below="@+id/email"
+                android:drawableLeft="@drawable/ic_password_icon_signup_screen"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:drawablePadding="15dp"
+                android:textSize="10dp"
+                android:hint="Confirm Your Password"
+                android:inputType="textWebPassword"
+                android:layout_below="@id/password"
+                android:id="@+id/confirm_password"
+                android:drawableLeft="@drawable/ic_confirm_password_signup"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:drawablePadding="15dp"
+                android:textSize="10dp"
+                android:hint="Your Contact Number"
+                android:inputType="phone"
+                android:layout_below="@id/confirm_password"
+                android:id="@+id/user_phone"
+                android:drawableLeft="@drawable/ic_phone_number_signup_icon"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:id="@+id/signup_button"
+                android:layout_below="@id/user_phone"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/right_arrow_login_signup"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="10dp"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:text="Already Have Account Sign In ? "
+                android:layout_below="@id/signup_button"
+                />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_back_icon_signup_screen"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:id="@+id/previous_screen_signup"
+        />
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_menu_icon_signup_screen"
+        android:id="@+id/menu_icon_signup"
+        android:layout_gravity="right"/>
+</FrameLayout>
