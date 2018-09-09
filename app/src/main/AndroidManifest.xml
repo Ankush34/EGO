@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ak.ego">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <application
         android:name=".AppController"
         android:allowBackup="true"
@@ -11,16 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".loginActivity.loginActivityMain"
+        <activity android:name=".mainActivity"
             android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBdxCv6jM9VmZ5XP1W5fEVa6he9Kx3Xg5E" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -40,6 +42,12 @@
             android:name=".signUpActivity.signUpActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity android:name=".loginActivity.loginActivityMain">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
