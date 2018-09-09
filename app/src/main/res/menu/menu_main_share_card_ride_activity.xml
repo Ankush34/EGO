@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:title="Login"
+        android:orderInCategory="101"
+        app:showAsAction="never"
+        android:id="@+id/signin"/>
+    <item
+        android:title="Signup"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:id="@+id/signup"/>
+    <item
+        android:title="Logout"
+        android:orderInCategory="103"
+        app:showAsAction="never"
+        android:id="@+id/signout"/>
+</menu>

@@ -5,17 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +19,7 @@ import android.widget.Toast;
 import com.ak.ego.AppConfig;
 import com.ak.ego.AppController;
 import com.ak.ego.R;
-import com.ak.ego.mainActivity;
+import com.ak.ego.mainActivityModule.mainActivity;
 import com.ak.ego.signUpActivity.signUpActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,7 +29,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
@@ -74,6 +68,7 @@ public class loginActivityMain extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_main);
+
         login_button_direct = (ImageView)findViewById(R.id.login_button_direct);
         login_button_direct.setOnClickListener(new View.OnClickListener() {
             @Override

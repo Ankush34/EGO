@@ -1,20 +1,22 @@
-package com.ak.ego;
+package com.ak.ego.mainActivityModule;
 
 import android.Manifest;
-import android.content.pm.PackageInfo;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ak.ego.R;
 import com.ak.ego.gps_tracker.GPSTracker;
+import com.ak.ego.shareCarRideModule.shareCarRideActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,16 +24,34 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 public class mainActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private GPSTracker gpsTracker;
+    private String city;
+    private String country;
+    private String postalCode;
+    private String addressLine;
+    private TextView location_city;
+    private TextView location_country;
+    private TextView location_code;
+    private TextView location_address;
+    private CardView book_a_share_ride;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        location_city = (TextView)findViewById(R.id.location_city);
+        location_country = (TextView)findViewById(R.id.location_country);
+        location_code = (TextView)findViewById(R.id.location_postal_code);
+        location_address = (TextView)findViewById(R.id.location_address_line);
+        book_a_share_ride = (CardView)findViewById(R.id.book_a_share_ride);
+        book_a_share_ride.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mainActivity.this,shareCarRideActivity.class);
+                startActivity(intent);
+            }
+        });
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
@@ -53,17 +73,27 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("Latitiude",stringLatitude);
             String stringLongitude = String.valueOf(gpsTracker.longitude);
             Log.d("Latitiude",stringLongitude);
-            String country = gpsTracker.getCountryName(this);
+            try {
+                country = gpsTracker.getCountryName(this);
+                location_country.setText("Country:  "+country);
+                city = gpsTracker.getLocality(this);
+                location_city.setText("City:  "+city);
+                postalCode = gpsTracker.getPostalCode(this);
+                location_code.setText("Postal Code:  "+postalCode);
+                addressLine = gpsTracker.getAddressLine(this);
+                location_address.setText("Address:  "+addressLine);
+            }catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(),"Could Not Get Your Location ",Toast.LENGTH_SHORT).show();
+                location_country.setText("Country:  "+"");
+                location_city.setText("City:  "+"");
+                location_code.setText("Postal Code:  "+"");
+                location_address.setText("Address:  "+"");
 
-            String city = gpsTracker.getLocality(this);
-
-            String postalCode = gpsTracker.getPostalCode(this);
-
-            String addressLine = gpsTracker.getAddressLine(this);
-
+            }
             LatLng location = new LatLng(Double.parseDouble(stringLatitude), Double.parseDouble(stringLongitude));
             mMap.addMarker(new MarkerOptions().position(location).title("My Location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14.0f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f));
 
         }
         else if(gpsTracker!= null)
@@ -90,5 +120,11 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
     }
 }
