@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.ak.ego.AppConfig;
 import com.ak.ego.AppController;
 import com.ak.ego.R;
+import com.ak.ego.mainActivity;
 import com.ak.ego.signUpActivity.signUpActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -88,7 +89,8 @@ public class loginActivityMain extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), signUpActivity.class);
-                startActivity(intent);
+                    startActivity(intent);
+                finish();
             }
         });
         login_by_facebook_custom_button = (ImageView) findViewById(R.id.login_by_facebook);
@@ -110,6 +112,9 @@ public class loginActivityMain extends Activity {
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         if (isLoggedIn) {
             Toast.makeText(getApplicationContext(), "Ur facebook login is still active", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, mainActivity.class);
+            startActivity(intent);
+            finish();
         } else {
             Toast.makeText(getApplicationContext(), "Ur facebook login has expired", Toast.LENGTH_SHORT).show();
         }
@@ -153,7 +158,8 @@ public class loginActivityMain extends Activity {
             public void onSuccess(LoginResult loginResult) {
                 Toast.makeText(getApplicationContext(), "Logged In By Facebook", Toast.LENGTH_SHORT).show();
                 System.out.println("onSuccess");
-
+                Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
+                startActivity(intent);
                 String accessToken = loginResult.getAccessToken()
                         .getToken();
                 Log.i("accessToken", accessToken);
@@ -216,6 +222,9 @@ public class loginActivityMain extends Activity {
                     startActivityForResult(signInIntent, RC_SIGN_IN);
                 } else {
                     Toast.makeText(getApplicationContext(), "U r signed in previously in app", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -227,7 +236,9 @@ public class loginActivityMain extends Activity {
 
             // Signed in successfully, show authenticated UI.
             Toast.makeText(getApplicationContext(), "You have signed in successfully", Toast.LENGTH_SHORT).show();
-
+            Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
+            startActivity(intent);
+            finish();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -270,6 +281,9 @@ public class loginActivityMain extends Activity {
                            if(response.getString("success").equals("true"))
                            {
                              Toast.makeText(getApplicationContext(),"Successfully Logged In !!",Toast.LENGTH_SHORT).show();
+                               Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
+                               startActivity(intent);
+                               finish();
                            }else
                            {
                              Toast.makeText(getApplicationContext(),"Could Not Login Please Retry !!",Toast.LENGTH_SHORT).show();
