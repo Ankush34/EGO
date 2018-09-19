@@ -10,28 +10,31 @@
         android:layout_width="match_parent"
         android:id="@+id/rel1"
         android:background="@color/colorPrimary"
-        android:layout_height="85dp">
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ego Make Your Own Buziness"
+            android:textAlignment="center"
             android:layout_margin="10dp"
+            android:id="@+id/buziness_title"
             android:textColor="#ffffff"/>
         <ImageView
             android:layout_width="30dp"
+            android:layout_below="@+id/buziness_title"
             android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
             android:id="@+id/user"
             android:background="@drawable/ic_profile"
-            android:layout_centerInParent="true"/>
+            android:layout_centerHorizontal="true"/>
         <TextView
             android:layout_width="wrap_content"
+            android:layout_below="@+id/user"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:textSize="15dp"
             android:id="@+id/drawer_name"
             android:layout_marginBottom="5dp"
             android:layout_centerHorizontal="true"
-            android:gravity="bottom"
             android:textColor="#ffffff"
             android:text="Ankush Khurana"/>
     </RelativeLayout>

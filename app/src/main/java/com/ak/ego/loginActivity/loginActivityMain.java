@@ -21,6 +21,8 @@ import com.ak.ego.AppController;
 import com.ak.ego.R;
 import com.ak.ego.mainActivityModule.mainActivity;
 import com.ak.ego.signUpActivity.signUpActivity;
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -50,6 +52,8 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class loginActivityMain extends Activity {
     public ImageView login_by_google;
@@ -63,12 +67,21 @@ public class loginActivityMain extends Activity {
     public int RC_SIGN_IN = 100;
     private static final String EMAIL = "email";
     public CallbackManager callbackManager;
+    public AppConfig appConfig;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_main);
 
+        appConfig = new AppConfig(getApplicationContext());
+        if(appConfig.isLogin())
+        {
+            Toast.makeText(getApplicationContext(),"Your Login Is Active",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, mainActivity.class);
+            startActivity(intent);
+            finish();
+        }
         login_button_direct = (ImageView)findViewById(R.id.login_button_direct);
         login_button_direct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,6 +194,9 @@ public class loginActivityMain extends Activity {
                                     String email = object.getString("email");
                                     String gender = object.getString("gender");
                                     String birthday = object.getString("birthday");
+                                    appConfig.setStatus_login(true);
+                                    appConfig.setUser_email(email);
+                                    appConfig.setUser_name(name);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -196,12 +212,14 @@ public class loginActivityMain extends Activity {
 
             @Override
             public void onCancel() {
+                appConfig.setStatus_login(false);
                 // App code
             }
 
             @Override
             public void onError(FacebookException exception) {
                 Toast.makeText(getApplicationContext(), "There was an error in signin", Toast.LENGTH_SHORT).show();
+                appConfig.setStatus_login(false);
             }
         });
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -215,7 +233,11 @@ public class loginActivityMain extends Activity {
                 if (account == null) {
                     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
+                    appConfig.setStatus_login(false);
                 } else {
+                    appConfig.setStatus_login(true);
+                    appConfig.setUser_email(account.getEmail());
+                    appConfig.setUser_name(account.getDisplayName());
                     Toast.makeText(getApplicationContext(), "U r signed in previously in app", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
                     startActivity(intent);
@@ -228,15 +250,19 @@ public class loginActivityMain extends Activity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+            appConfig.setStatus_login(true);
+            appConfig.setUser_email(account.getEmail());
+            appConfig.setUser_name(account.getDisplayName());
             // Signed in successfully, show authenticated UI.
             Toast.makeText(getApplicationContext(), "You have signed in successfully", Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
             startActivity(intent);
             finish();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            appConfig.setStatus_login(false);
             Log.w("GOOGLE SIGN IN", "signInResult:failed code=" + e.getStatusCode());
             Toast.makeText(getApplicationContext(), "Sorry Error Took Place", Toast.LENGTH_SHORT).show();
         }
@@ -262,21 +288,29 @@ public class loginActivityMain extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             JSONObject params = new JSONObject();
+            JSONObject params_final = new JSONObject();
              try {
-                params.put("user_email",email.getText().toString().toLowerCase().trim());
-                params.put("user_password",password.getText().toString().trim());
+                params.put("email",email.getText().toString().toLowerCase().trim());
+                params.put("password",password.getText().toString().trim());
+                params_final.put("user", params);
              }catch (Exception e)
              {
                  e.printStackTrace();
              }
-            JsonObjectRequest login_request = new JsonObjectRequest(Request.Method.POST, AppConfig.login_url, params, new Response.Listener<JSONObject>() {
+            JsonObjectRequest login_request = new JsonObjectRequest(Request.Method.POST, AppConfig.login_url, params_final,
+                    new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                     try {
+                    Log.d("Response",response.toString());
+                    try {
                            if(response.getString("success").equals("true"))
                            {
                              Toast.makeText(getApplicationContext(),"Successfully Logged In !!",Toast.LENGTH_SHORT).show();
-                               Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
+                             JSONObject user = response.getJSONObject("user");
+                             appConfig.setStatus_login(true);
+                             appConfig.setUser_email(user.getString("email"));
+                             appConfig.setUser_name(user.getString("name"));
+                             Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
                                startActivity(intent);
                                finish();
                            }else
@@ -292,10 +326,34 @@ public class loginActivityMain extends Activity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                      Toast.makeText(getApplicationContext(),"Error Took Place Please Retry",Toast.LENGTH_SHORT).show();
-                     Log.d("LOGINACTIVITY",error.getMessage());
+                     Log.d("LOGINACTIVITY",error.toString() );
                 }
-            });
-            AppController.getInstance().addToRequestQueue(login_request)    ;
+            }){
+                @Override
+                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                    Log.d("NETWORKREPONSE", response.headers.get("Authorization").toString().split(" ")[1]);
+                    AppConfig.bearer_token = response.headers.get("Authorization").toString().split(" ")[1];
+                    appConfig.set_bearer_token(response.headers.get("Authorization").toString().split(" ")[1]);
+                    return super.parseNetworkResponse(response);
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json");
+                    params.put("Access-Control-Request-Method","application/json");
+                    return params;
+                }
+            };
+                try {
+                    login_request.getHeaders().put("Content-Type","application/json");
+                    login_request.getHeaders().put("Access-Control-Request-Method","application/json");
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            AppController.getInstance().addToRequestQueue(login_request);
             return null;
         }
     }

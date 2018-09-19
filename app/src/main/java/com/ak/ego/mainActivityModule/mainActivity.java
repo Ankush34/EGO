@@ -3,6 +3,7 @@ package com.ak.ego.mainActivityModule;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -14,15 +15,27 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ak.ego.AppConfig;
+import com.ak.ego.AppController;
 import com.ak.ego.R;
+import com.ak.ego.share_vehicle_module.share_vehicle_activity;
 import com.ak.ego.gps_tracker.GPSTracker;
 import com.ak.ego.shareCarRideModule.shareCarRideActivity;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class mainActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -36,14 +49,25 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView location_code;
     private TextView location_address;
     private CardView book_a_share_ride;
+    private CardView share_my_vehicle;
+    private AppConfig appConfig;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appConfig = new AppConfig(getApplicationContext());
         location_city = (TextView)findViewById(R.id.location_city);
         location_country = (TextView)findViewById(R.id.location_country);
         location_code = (TextView)findViewById(R.id.location_postal_code);
         location_address = (TextView)findViewById(R.id.location_address_line);
+        share_my_vehicle = (CardView)findViewById(R.id.share_my_vehicle);
+        share_my_vehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),share_vehicle_activity.class);
+                startActivity(intent);
+            }
+        });
         book_a_share_ride = (CardView)findViewById(R.id.book_a_share_ride);
         book_a_share_ride.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +86,7 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        new get_all_users_test().execute();
     }
 
     @Override
@@ -122,6 +147,33 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public class get_all_users_test extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            JsonArrayRequest request = new JsonArrayRequest(AppConfig.get_all_users, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Toast.makeText(getApplicationContext()  ,""+response.toString(),Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("Volley Error",error.toString());
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization","Bearer " + appConfig.getBearerToken());
+                    return params;
+                }
+            };
+            AppController.getInstance().addToRequestQueue(request);
+            return  null;
+        }
+    }
     @Override
     protected void onResume() {
 

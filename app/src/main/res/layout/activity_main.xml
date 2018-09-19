@@ -209,6 +209,31 @@
                             android:layout_marginTop="140dp"
                             android:text="Book a Car Ride on my way"/>
                     </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        app:cardElevation="10dp"
+                        android:id="@+id/share_my_vehicle"
+                        android:layout_below="@+id/book_a_car"
+                        app:cardCornerRadius="10dp"
+                        android:layout_margin="10dp"
+                        >
+                        <ImageView
+                            android:layout_width="175dp"
+                            android:layout_height="125dp"
+                            android:src="@drawable/share_car"
+                            android:layout_marginTop="10dp"
+                            android:layout_gravity="center_horizontal">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15dp"
+                            android:textColor="@color/colorBlack"
+                            android:textAlignment="center"
+                            android:layout_marginTop="140dp"
+                            android:text="Book my vehicle to share service"/>
+                    </android.support.v7.widget.CardView>
                 </RelativeLayout>
                 </ScrollView>
         </LinearLayout>

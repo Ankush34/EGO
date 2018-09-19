@@ -52,23 +52,24 @@ public class signUpActivity extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             JSONObject params = new JSONObject();
+            JSONObject params_main  = new JSONObject();
             try
             {
-              params.put("user_name","xxxxxx");
-              params.put("user_email",user_email.getText().toString().trim());
-              params.put("user_password",user_password.getText().toString().trim());
-              params.put("user_phone",user_phone.getText().toString().trim());
-
+              params.put("name","ankush khurana");
+              params.put("email",user_email.getText().toString().trim());
+              params.put("password",user_password.getText().toString().trim());
+              params.put("contact_no",user_phone.getText().toString().trim());
+              params_main.put("user", params);
             }catch (Exception e)
             {
                 e.printStackTrace();
             }
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,AppConfig.signup_url,params, new Response.Listener<JSONObject>() {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,AppConfig.signup_url,params_main, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d("SignUpActivity: ",""+response.toString());
                     try {
-                        if(response.getString("success").equals("true"))
+                        if(response.getString("status").equals("Successfully Registered"))
                         {
                             Toast.makeText(getApplicationContext(),"Successfully done signup",Toast.LENGTH_LONG).show();
                         }
