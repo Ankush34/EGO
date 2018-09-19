@@ -130,6 +130,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
         private RelativeLayout end_location_layout;
         private RelativeLayout no_location_selected_layout;
         private Button start_share ;
+        private ImageView confirm_and_start_sharing_ride;
     /* ------- */
 
     /* code for service intent */
@@ -408,6 +409,17 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
             }
         });
         /* ------- */
+        confirm_and_start_sharing_ride = (ImageView)findViewById(R.id.confirm_and_start_my_ride_sharing);
+        confirm_and_start_sharing_ride.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // start pubnub activity for start publishing and start tracking user vehicle on the road
+                // plus we need to show the complete route to the user even in the background
+                // start periodict notification after every 5 min to the remaining ride time
+                // after the user accepts the or subscribe this rider popup to the user about the acceptance
+                // after the driver accepts start publishing the locaiton of the driver to the user and user to the driver
+            }
+        });
     }
 
 
