@@ -7,7 +7,16 @@ public class Vehicle {
     private String city;
     private String country;
     private String state;
+    private String json_id;
 
+
+    public String getJson_id() {
+        return json_id;
+    }
+
+    public void setJson_id(String json_id) {
+        this.json_id = json_id;
+    }
 
     public String getState() {
         return state;

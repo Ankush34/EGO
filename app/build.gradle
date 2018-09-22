@@ -40,7 +40,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:[4,5)'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.20.0'
+    implementation 'com.pubnub:pubnub-android-debug:3.7.2'
     // this library is responsible for the direction api request
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1'
 

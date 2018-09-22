@@ -19,8 +19,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$PROJECT_DIR$/../../../Downloads/close.png" />
-                                      <entry key="outputName" value="ic_action_close_sub_window" />
+                                      <entry key="imageAsset" value="$PROJECT_DIR$/../../../Desktop/taxi.png" />
+                                      <entry key="outputName" value="ic_book_taxi" />
                                     </map>
                                   </option>
                                 </PersistentState>

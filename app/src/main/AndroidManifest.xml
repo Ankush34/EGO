@@ -61,6 +61,22 @@
         <activity android:name=".share_vehicle_module.start_share_service_activity"
             android:theme="@style/NoActionBar">
         </activity>
+        <service
+            android:exported="true"
+            android:name=".share_vehicle_module.LocationService"></service>
+        <service android:name=".share_vehicle_module.LocationServiceBounded"
+            android:exported="true"></service>
+        <receiver android:name=".share_vehicle_module.LocationServiceBroadcastReceiver"
+            android:exported="false"></receiver>
+        <service android:name=".SingleClickServiceToBookTaxiModule.BookService"
+            android:icon="@drawable/ic_book_taxi"
+            android:label="Book Taxi Direct"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

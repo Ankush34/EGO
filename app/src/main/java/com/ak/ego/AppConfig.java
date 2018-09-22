@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AppConfig {
-    public static String url_base = "http://f2428e35.ngrok.io";
+    public static String url_base = "http://03de6933.ngrok.io";
     public static String signup_url = url_base+"/users/create_user_from_api";
     public static String login_url = url_base+"/users/sign_in.json";
     public static String get_all_users = url_base+"/users.json";
