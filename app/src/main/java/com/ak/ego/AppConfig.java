@@ -4,12 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AppConfig {
-    public static String url_base = "http://03de6933.ngrok.io";
+    public static String url_base = "http://119340f7.ngrok.io";
     public static String signup_url = url_base+"/users/create_user_from_api";
     public static String login_url = url_base+"/users/sign_in.json";
     public static String get_all_users = url_base+"/users.json";
     public static String get_all_users_vehicles = url_base+"/vehicles.json?email=";
+
+    // we send a patch request to this route which goes to update action of the vehicle controller
+    public static String update_user_location = url_base+"/users/update_user_from_api";
     public static String bearer_token = "";
+    public static String get_seeker_rides_url = url_base+"/seeker_rides.json?provider_ride_id=";
+    public static String create_seeker_ride_url = url_base+"/seeker_rides.json";
+    public static String create_provider_ride_url = url_base+"/provider_rides"+".json";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private static String PREF_NAME = "Khurana_sales_pref";
@@ -19,6 +25,7 @@ public class AppConfig {
 
     }
 
+
     public AppConfig(Context context)
     {
         int private_mode = 0;
@@ -27,11 +34,44 @@ public class AppConfig {
         editor.commit();
     }
 
+    public void setProviderRideId(String provider_ride_id)
+    {
+        editor.putString("provider_ride_id",provider_ride_id);
+        editor.commit();
+    }
+
+    public String getProviderRideId(){
+        return pref.getString("provider_ride_id","null");
+    }
+
     public void set_user_name(String user_name)
     {
         editor.putString("user_name",user_name);
         editor.commit();
     }
+
+    public void setUserId(String id)
+    {
+        editor.putString("user_id",id);
+        editor.commit();
+    }
+
+    public String getUserId(){
+        return pref.getString("user_id","");
+    }
+
+    public void set_current_vehicle_id_in_service(String vehicle_id)
+    {
+        editor.putString("vehicle_id",vehicle_id);
+        editor.commit();
+    }
+
+    public String getCurrentVehicleIdInService()
+    {
+        return pref.getString("vehicle_id","");
+    }
+
+
     public String getUserName()
     {
         return pref.getString("user_name","Ankush Khurana");

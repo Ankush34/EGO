@@ -1,6 +1,7 @@
 package com.ak.ego.share_vehicle_module;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +25,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -48,10 +53,14 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.network.DirectionService;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -68,6 +77,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +107,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
     private RecyclerView my_vehicles_recycler;
     private vehicles_present_adpater vehicles_recycler_adapter;
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
+    private Vehicle vehicle_selected;
 
     /* ------- */
 
@@ -139,6 +150,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
     /* ------ */
 
     /* code for routes selection */
+    private Route selected_route_to_proceed;
     private ArrayList<Route> routes_to_destination = new ArrayList<>();
     private RecyclerView routes_selection_recycler_view;
     private RelativeLayout routes_selection_layout;
@@ -156,12 +168,34 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
     private MarkerOptions end_locaiton_marker_optiions;
     private LatLngBounds.Builder bounds_builder = new LatLngBounds.Builder();
     private LatLngBounds bounds ;
+    private ImageView confrim_and_start_my_sharing_ride;
     /* ------------------ */
+
+    /* code for recycler view showing all the details about the rides provided */
+
+    private RecyclerView recycler_provided_shared_rides_info;
+    private provided_share_rides_info_adapter shared_rides_info_adapter;
+    private ArrayList<Ride> rides = new ArrayList<>();
+    /* ---------------- */
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_vehicle_activity_layout);
+
+        /* code for rides that are shared by the provider in this chapter */
+
+            recycler_provided_shared_rides_info = (RecyclerView)findViewById(R.id.shared_rides_provided_recycler);
+            shared_rides_info_adapter = new provided_share_rides_info_adapter(this, rides);
+            recycler_provided_shared_rides_info.setAdapter(shared_rides_info_adapter);
+            recycler_provided_shared_rides_info.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
+            recycler_provided_shared_rides_info.setHasFixedSize(true);
+            rides.add(new Ride());
+            rides.add(new Ride());
+            rides.add(new Ride());
+            shared_rides_info_adapter.notifyDataSetChanged();
+            /* ----------------------- */
+
         appConfig = new AppConfig(getApplicationContext());
         locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -192,7 +226,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
         /* recycler view setup here this recycler view renders all the vehicles of the user */
 
         recyclerViewItemClickListener listner_vehicle_selection = (view, position)->{
-            Vehicle vehicle_selected = vehicles.get(position);
+            vehicle_selected = vehicles.get(position);
             account_name.setText(appConfig.getUser_name());
             account_email.setText(appConfig.getUser_email());
             account_type.setText("Service Provider");
@@ -200,7 +234,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
             ride_vehicle_number.setText(vehicle_selected.getNumber());
             ride_vehicle.setText(vehicle_selected.getType());
             ride_vehicle_registration_number.setText(vehicle_selected.getRegistration_number());
-            confirmation_ride_layout.setVisibility(View.VISIBLE);
+            fadeIn(confirmation_ride_layout);
         };
         my_vehicles_recycler =  (RecyclerView)findViewById(R.id.my_vehicles_recycler);
         vehicles_recycler_adapter = new vehicles_present_adpater(this, vehicles, listner_vehicle_selection);
@@ -323,7 +357,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
         back_confirmation_layout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirmation_ride_layout.setVisibility(View.INVISIBLE);
+                fadeOut(confirmation_ride_layout);
             }
         });
         start_share = (Button)findViewById(R.id.start_share);
@@ -334,7 +368,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
             }
         });
         confirmation_ride_layout = (RelativeLayout)findViewById(R.id.confirmation_ride_layout);
-        confirmation_ride_layout.setVisibility(View.INVISIBLE);
+        fadeOut(confirmation_ride_layout);
         start_location_layout = (RelativeLayout)findViewById(R.id.start_location_layout);
         end_location_layout = (RelativeLayout)findViewById(R.id.end_location_layout);
         no_location_selected_layout = (RelativeLayout)findViewById(R.id.no_location_selected_layout);
@@ -395,31 +429,29 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
         routes_selection_recycler_view = (RecyclerView)findViewById(R.id.locations_for_selection_recycler);
         routes_selection_recycler_view.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         routes_selection_recycler_view.setHasFixedSize(true);
-        recyclerViewItemClickListener location_selected_listener = (view, position)->{
-            Toast.makeText(getApplicationContext(),"you have selected location at position"+position,Toast.LENGTH_SHORT).show();
+        recyclerViewItemClickListener route_selected_listener = (view, position)->{
+            Toast.makeText(getApplicationContext(),"you have selected location at position "+(position+1),Toast.LENGTH_SHORT).show();
+            selected_route_to_proceed = routes_to_destination.get(position);
         };
-        adapter_for_route_selection = new select_route_adapter(this,routes_to_destination,location_selected_listener,"","");
+        adapter_for_route_selection = new select_route_adapter(this,routes_to_destination,route_selected_listener,"","");
         routes_selection_recycler_view.setAdapter(adapter_for_route_selection);
         adapter_for_route_selection.notifyDataSetChanged();
         back_route_selection_layout = (ImageView)findViewById(R.id.back_select_travel_route);
         back_route_selection_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                routes_selection_layout.setVisibility(View.INVISIBLE);
+                slideToBottom(routes_selection_layout);
             }
+
         });
-        /* ------- */
         confirm_and_start_sharing_ride = (ImageView)findViewById(R.id.confirm_and_start_my_ride_sharing);
         confirm_and_start_sharing_ride.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start pubnub activity for start publishing and start tracking user vehicle on the road
-                // plus we need to show the complete route to the user even in the background
-                // start periodict notification after every 5 min to the remaining ride time
-                // after the user accepts the or subscribe this rider popup to the user about the acceptance
-                // after the driver accepts start publishing the locaiton of the driver to the user and user to the driver
+                new upload_start_end_location().execute();
             }
         });
+        /* ------- */
     }
 
 
@@ -435,7 +467,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
                  .execute(new DirectionCallback() {
                      @Override
                      public void onDirectionSuccess(Direction direction, String rawBody) {
-                         routes_selection_layout.setVisibility(View.VISIBLE);
+                         slideToTop(routes_selection_layout);
                          routes_to_destination.clear();
                          map_route_selector.clear();
                          if(start_location_marker != null)
@@ -596,6 +628,7 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
                             vh.setState(response_object.getString("state"));
                             vh.setType(response_object.getString("vehicle_type"));
                             vh.setRegistration_number(response_object.getString("registration_number"));
+                            vh.setJson_id(response_object.getString("id"));
                             vehicles.add(vh);
                             vehicles_recycler_adapter.notifyDataSetChanged();
                         }
@@ -749,5 +782,119 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
     }
     /* ------------- */
 
+    /* amintors code */
 
+    public void fadeOut(View v)
+    {
+
+        Animation fadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+        fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) { }
+            @Override public void onAnimationEnd(Animation animation) { v.setVisibility(View.INVISIBLE); }
+            @Override public void onAnimationRepeat(Animation animation) { }
+        });
+        v.startAnimation(fadeOutAnimation);
+    }
+
+    public void fadeIn(View v)
+    {
+
+        Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        fadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) { }
+            @Override public void onAnimationEnd(Animation animation) { v.setVisibility(View.VISIBLE);}
+            @Override public void onAnimationRepeat(Animation animation) { }
+        });
+        v.startAnimation(fadeInAnimation);
+    }
+
+    public void slideToBottom(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight()-10);
+        animate.setDuration(500);
+        animate.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) { }
+            @Override public void onAnimationEnd(Animation animation) {view.setVisibility(View.INVISIBLE);}
+            @Override public void onAnimationRepeat(Animation animation) { }
+        });
+        view.startAnimation(animate);
+    }
+
+    public void slideToTop(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,view.getHeight(),0);
+        animate.setDuration(500);
+        animate.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {view.setVisibility(View.VISIBLE); }
+            @Override public void onAnimationEnd(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {}
+        });
+        view.startAnimation(animate);
+    }
+
+    public class upload_start_end_location extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            JSONObject params= new JSONObject();
+            JSONObject parent = new JSONObject();
+            JSONObject top = new JSONObject();
+            try {
+                params.put("latitude","");
+                params.put("longitude","");
+                params.put("start_location_latitude",""+start_place.getLatLng().latitude);
+                params.put("start_location_longitude",""+start_place.getLatLng().longitude);
+                params.put("end_location_latitude",""+end_place.getLatLng().latitude);
+                params.put("end_location_longitude",""+end_place.getLatLng().longitude);
+                params.put("route",selected_route_to_proceed.getSummary());
+                top.put("location_attributes",params);
+                parent.put("user",top);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,AppConfig.update_user_location+".json",parent, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("UPDATESTARTLOCATION: ",""+response.toString());
+                    try {
+                            Toast.makeText(getApplicationContext(),"Successfully upload your route",Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), start_share_service_activity.class);
+                        intent.putParcelableArrayListExtra("route",selected_route_to_proceed.getLegList().get(0).getDirectionPoint());
+                        intent.putExtra("start_location_latitude",""+start_place.getLatLng().latitude);
+                        intent.putExtra("start_location_longitude",""+start_place.getLatLng().longitude);
+                        intent.putExtra("end_location_latitude",""+end_place.getLatLng().latitude);
+                        intent.putExtra("end_location_longitude",""+end_place.getLatLng().longitude);
+                        intent.putExtra("vehicle_id",vehicle_selected.getJson_id());
+                        appConfig.set_current_vehicle_id_in_service(vehicle_selected.getJson_id());
+                        startActivity(intent);
+
+                    }catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("VolleyError",""+error.getMessage());
+                    Toast.makeText(getApplicationContext(),"Error Took Place , Please Check Your Network Connection",Toast.LENGTH_SHORT).show();
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization","Bearer " + appConfig.getBearerToken());
+                    return params;
+                }
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            AppController.getInstance().addToRequestQueue(request);
+            return null;
+        }
+    }
+    /* ------------- */
 }

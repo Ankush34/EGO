@@ -16,14 +16,14 @@ import com.akexorcist.googledirection.model.Route;
 import java.util.ArrayList;
 import java.util.List;
 
-public class select_route_adapter extends RecyclerView.Adapter<select_route_adapter.ViewHolder> {
+public class load_location_to_pickup_adapter extends RecyclerView.Adapter<load_location_to_pickup_adapter.ViewHolder> {
 
     private ArrayList<Route> routes = new ArrayList<>();
     private Activity mActivity;
     private recyclerViewItemClickListener routes_selection_listener;
     public String start_location;
     public String end_location;
-    public select_route_adapter(Activity activity, ArrayList<Route> routes, recyclerViewItemClickListener routes_selection_listener, String start_location, String end_location)
+    public load_location_to_pickup_adapter(Activity activity, ArrayList<Route> routes, recyclerViewItemClickListener routes_selection_listener, String start_location, String end_location)
     {
         this.routes = routes;
         this.mActivity = activity;
@@ -47,7 +47,7 @@ public class select_route_adapter extends RecyclerView.Adapter<select_route_adap
         String time_to_travel = " "+legs.get(0).getDuration().getText();
         for(int i = 1; i<legs.size();i++)
         {
-                time_to_travel = time_to_travel +" + "+legs.get(i).getDuration().getText();
+            time_to_travel = time_to_travel +" + "+legs.get(i).getDuration().getText();
         }
         holder.time_to_travel_text.setText(time_to_travel);
         holder.via_location_text.setText(routes.get(position).getSummary());

@@ -21,8 +21,7 @@ import com.ak.ego.R;
 import com.ak.ego.SingleClickServiceToBookTaxiModule.BookService;
 import com.ak.ego.share_vehicle_module.share_vehicle_activity;
 import com.ak.ego.gps_tracker.GPSTracker;
-import com.ak.ego.shareCarRideModule.shareCarRideActivity;
-import com.ak.ego.share_vehicle_module.start_share_service_activity;
+import com.ak.ego.bookShareCarRideModule.shareCarRideActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -66,8 +65,8 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
         share_my_vehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(),share_vehicle_activity.class);
-                Intent intent = new Intent(getApplicationContext(),start_share_service_activity.class);
+                Intent intent = new Intent(getApplicationContext(),share_vehicle_activity.class);
+//                Intent intent = new Intent(getApplicationContext(),start_share_service_activity.class);
                 startActivity(intent);
             }
         });

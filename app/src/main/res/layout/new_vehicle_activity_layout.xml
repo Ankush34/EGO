@@ -60,6 +60,45 @@
         </RelativeLayout>
         <include layout="@layout/drawer"
             android:fitsSystemWindows="false" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="10dp"
+                    android:layout_weight="0.8">
+                </RelativeLayout>
+                <com.ak.ego.share_vehicle_module.screenCustomViewMobule.ArcLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1.2"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/colorWhite"
+                    android:background="@color/colorWhite"
+                    app:arc_cropDirection="cropOutside"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:elevation="10dp"
+                    app:arc_height="50dp"
+                    app:arc_position="top">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:backgroundTint="@color/colorWhite"
+                        android:background="@color/colorWhite">
+                        <include layout="@layout/provider_sharing_rides_provided_info">
+                        </include>
+                    </RelativeLayout>
+                </com.ak.ego.share_vehicle_module.screenCustomViewMobule.ArcLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
     </android.support.v4.widget.DrawerLayout>
     <RelativeLayout
         android:layout_width="match_parent"

@@ -310,6 +310,7 @@ public class loginActivityMain extends Activity {
                              appConfig.setStatus_login(true);
                              appConfig.setUser_email(user.getString("email"));
                              appConfig.setUser_name(user.getString("name"));
+                             appConfig.setUserId(user.getString("_id"));
                              Intent intent = new Intent(loginActivityMain.this, mainActivity.class);
                                startActivity(intent);
                                finish();

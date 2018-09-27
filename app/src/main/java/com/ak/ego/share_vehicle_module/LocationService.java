@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +15,23 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.ak.ego.AppConfig;
+import com.ak.ego.AppController;
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.common.geometry.S2CellId;
+import com.google.common.geometry.S2LatLng;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -98,6 +115,10 @@ public class LocationService extends Service implements LocationListener {
     private void commandStop() {
         stopForeground(true);
         stopSelf();
+        mTimer.cancel();
+        mLooper.quit();
+        locationManager.removeUpdates(this);
+
     }
 
     private void moveToStartedState() {
@@ -230,6 +251,9 @@ public class LocationService extends Service implements LocationListener {
         Bundle bundle = new Bundle();
         bundle.putDouble("latitude",latitude);
         bundle.putDouble("longitude",longitude);
+        bundle.putDouble("end_latitude",Double.parseDouble(intent_sent_by_activity.getStringExtra("end_location_latitude")));
+        bundle.putDouble("end_longitude",Double.parseDouble(intent_sent_by_activity.getStringExtra("end_location_longitude")));
+        bundle.putString("bearer_token",intent_sent_by_activity.getStringExtra("bearer_token"));
         message.setData(bundle);
         message.obj = intent_sent_by_activity;
         serviceHandler.sendMessage(message);
@@ -254,14 +278,125 @@ public class LocationService extends Service implements LocationListener {
 
         intent.putExtra("latitude",location.getLatitude()+"");
         intent.putExtra("longitude",location.getLongitude()+"");
+        new upload_start_end_location().execute();
+        Double[] data = new Double[2];
+        data[0] = latitude;
+        data[1] = longitude;
+//        new snap_to_road().execute(data);
         sendBroadcast(intent);
+    }
+
+    public class upload_start_end_location extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            JSONObject params= new JSONObject();
+            JSONObject parent = new JSONObject();
+            JSONObject top = new JSONObject();
+            try {
+                params.put("latitude",location.getLatitude());
+                params.put("longitude",location.getLongitude());
+                top.put("location_attributes",params);
+                top.put("service_type","PROVIDER");
+                S2LatLng s2LatLng = S2LatLng.fromDegrees(location.getLatitude(),location.getLongitude());
+                params.put("s2_region_id",S2CellId.fromLatLng(s2LatLng).toToken().substring(0,8));
+                parent.put("user",top);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,AppConfig.update_user_location+".json",parent, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("UPDATESTARTLOCATION: ",""+response.toString());
+                    try {
+                            Log.d("Writing Location", "Successfully written your route");
+                    }catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("VolleyError",""+error.getMessage());
+                    Toast.makeText(getApplicationContext(),"Error Took Place , Please Check Your Network Connection",Toast.LENGTH_SHORT).show();
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization","Bearer " + intent_sent_by_activity.getStringExtra("bearer_token"));
+                    return params;
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json";
+                }
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            AppController.getInstance().addToRequestQueue(request);
+            return null;
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("ONDESTROY","i am destroyed");
         mLooper.quit();
     }
 
+    public class snap_to_road extends AsyncTask<Double, Void, Void>{
+        @Override
+        protected Void doInBackground(Double... data) {
+            JSONObject params = new JSONObject();
+            if(location != null)
+            {
+                JsonObjectRequest request_snap_to_road = new JsonObjectRequest(Request.Method.GET, "https://roads.googleapis.com/v1/snapToRoads?path="+data[0]+","+data[1]+"&interpolate=true&key=AIzaSyBdxCv6jM9VmZ5XP1W5fEVa6he9Kx3Xg5E", params, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if(response.length() > 0)
+                            {
+                                JSONArray array_response = response.getJSONArray("snappedPoints");
+                                if(array_response.length() > 0)
+                                {
+                                    JSONObject snapped_points_json = array_response.getJSONObject(0);
+                                    JSONObject snapped_points_location = snapped_points_json.getJSONObject("location");
+                                    Double latitude = snapped_points_location.getDouble("latitude");
+                                    Double longitude = snapped_points_location.getDouble("longitude");
+                                    Log.d("Snapped latitude",""+latitude);
+                                    Log.d("Snapped longitude",""+longitude);
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("SNAP","Sorry could not snap to road");
+                    }
+                });
+                request_snap_to_road.setRetryPolicy(new DefaultRetryPolicy(
+                        DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                AppController.getInstance().addToRequestQueue(request_snap_to_road);
+            }
+            return  null;
+        }
+    }
 
 }

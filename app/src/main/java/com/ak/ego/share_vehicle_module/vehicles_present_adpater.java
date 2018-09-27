@@ -37,26 +37,9 @@ public class vehicles_present_adpater extends RecyclerView.Adapter<vehicles_pres
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Vehicle vehicle = vehicles.get(position);
-        if(vehicle.getType().equals("Bike"))
+        if(vehicle.getType().equals("Taxi"))
         {
-            holder.vehicle_logo.setImageResource(R.drawable.bike);
-        }else if(vehicle.getType().equals("Car"))
-        {
-            holder.vehicle_logo.setImageResource(R.drawable.car);
-        }else if(vehicle.getType().equals("3 Wheeler"))
-        {
-            holder.vehicle_logo.setImageResource(R.drawable.three_wheeler);
-        }else if(vehicle.getType().equals("Pickup Truck"))
-        {
-            holder.vehicle_logo.setImageResource(R.drawable.pickup_truck);
-        }
-        else if(vehicle.getType().equals("Heavy Carrier Truck"))
-        {
-            holder.vehicle_logo.setImageResource(R.drawable.truck);
-        }
-        else if(vehicle.getType().equals("Extra Heavy Loading Truck"))
-        {
-            holder.vehicle_logo.setImageResource(R.drawable.extra_heavy_loading_truck);
+            holder.vehicle_logo.setImageResource(R.drawable.taxi_for_share);
         }
         holder.vehicle_number.setText(vehicle.getNumber());
         holder.vehicle_reg_number.setText(vehicle.getRegistration_number());

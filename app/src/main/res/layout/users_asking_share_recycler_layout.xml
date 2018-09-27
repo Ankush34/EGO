@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="105dp"
+        android:layout_height="105dp"
+        android:src="@drawable/asking_for_taxi"
+        android:layout_margin="10dp"
+        android:id="@+id/asking_for_taxi_image"
+        android:layout_centerHorizontal="true"/>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/asking_for_taxi_image"
+        android:layout_margin="10dp"
+        android:id="@+id/users_asking_for_taxi_recycler"
+        android:orientation="horizontal">
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>

@@ -1,7 +1,7 @@
 
 
 
-package com.ak.ego.shareCarRideModule;
+package com.ak.ego.bookShareCarRideModule;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,8 +16,8 @@ import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
 import android.view.Menu;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ak.ego.R;
 import com.ak.ego.gps_tracker.GPSTracker;
@@ -76,6 +76,7 @@ public class shareCarRideActivity extends AppCompatActivity {
 
         final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        ((EditText)autocompleteFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(12.0f);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -99,6 +100,7 @@ public class shareCarRideActivity extends AppCompatActivity {
 
         final PlaceAutocompleteFragment endPlaceAutoCompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.end_place_autocomplete_fragment);
+        ((EditText)endPlaceAutoCompleteFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(12.0f);
 
         endPlaceAutoCompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
