@@ -58,7 +58,7 @@ public class vehicles_present_adpater extends RecyclerView.Adapter<vehicles_pres
         public TextView vehicle_type;
         public TextView vehicle_city;
         public ImageView vehicle_logo;
-        public Button start_share_button;
+        public ImageView start_share_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -67,7 +67,7 @@ public class vehicles_present_adpater extends RecyclerView.Adapter<vehicles_pres
             vehicle_city = (TextView)itemView.findViewById(R.id.vehicle_city_name);
             vehicle_type = (TextView)itemView.findViewById(R.id.vehicle_type);
             vehicle_logo = (ImageView)itemView.findViewById(R.id.vehicle_logo);
-            start_share_button = (Button)itemView.findViewById(R.id.start_share_button);
+            start_share_button = (ImageView)itemView.findViewById(R.id.start_share_button);
             start_share_button.setOnClickListener(this);
         }
 

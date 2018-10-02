@@ -19,6 +19,7 @@ import com.ak.ego.AppConfig;
 import com.ak.ego.AppController;
 import com.ak.ego.R;
 import com.ak.ego.SingleClickServiceToBookTaxiModule.BookService;
+import com.ak.ego.grocceryClientBookingModule.makeMyOrder;
 import com.ak.ego.share_vehicle_module.share_vehicle_activity;
 import com.ak.ego.gps_tracker.GPSTracker;
 import com.ak.ego.bookShareCarRideModule.shareCarRideActivity;
@@ -51,6 +52,7 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView location_address;
     private CardView book_a_share_ride;
     private CardView share_my_vehicle;
+    private CardView plan_my_groccery;
     private AppConfig appConfig;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +64,8 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
         location_code = (TextView)findViewById(R.id.location_postal_code);
         location_address = (TextView)findViewById(R.id.location_address_line);
         share_my_vehicle = (CardView)findViewById(R.id.share_my_vehicle);
+        plan_my_groccery = (CardView)findViewById(R.id.book_a_groccery_order);
+
         share_my_vehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,6 +79,13 @@ public class mainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mainActivity.this,shareCarRideActivity.class);
+                startActivity(intent);
+            }
+        });
+        plan_my_groccery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), makeMyOrder.class);
                 startActivity(intent);
             }
         });

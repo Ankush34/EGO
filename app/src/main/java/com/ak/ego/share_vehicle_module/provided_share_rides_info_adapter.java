@@ -34,7 +34,12 @@ public class provided_share_rides_info_adapter extends RecyclerView.Adapter<prov
 
     @Override
     public void onBindViewHolder(@NonNull provided_share_rides_info_adapter.ViewHolder holder, int position) {
-
+        Ride ride = rides.get(position);
+        holder.start_location.setText(ride.getStart_location());
+        holder.end_location.setText(ride.getEnd_location());
+        holder.ride_total_amount.setText("Rs. "+ride.getRide_total_amount()+" /-");
+        holder.total_occupants.setText(ride.getCount_of_occupants());
+        holder.total_ride_time.setText(ride.getTime_of_travel());
     }
 
     @Override
@@ -52,7 +57,13 @@ public class provided_share_rides_info_adapter extends RecyclerView.Adapter<prov
 
         public ViewHolder(View itemView) {
             super(itemView);
-        }
+            start_location = (TextView)itemView.findViewById(R.id.ride_start_location);
+            end_location = (TextView)itemView.findViewById(R.id.ride_destination_location);
+            total_occupants = (TextView)itemView.findViewById(R.id.number_of_pickups);
+            ride_total_amount = (TextView)itemView.findViewById(R.id.total_ride_cost);
+            total_ride_time = (TextView)itemView.findViewById(R.id.total_time_of_ride);
+        };
+
     }
 }
 

@@ -10,11 +10,6 @@
         app:cardElevation="10dp"
         android:layout_margin="10dp">
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="@color/colorPrimary">
-        </RelativeLayout>
-        <RelativeLayout
             android:layout_width="3dp"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary">
@@ -33,6 +28,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
                 android:layout_below="@+id/vehicle_logo"
                 android:layout_height="wrap_content">
                 <LinearLayout
@@ -65,7 +61,7 @@
                     android:id="@+id/vehicle_reg_number_layout"
                     android:layout_below="@+id/vehicle_number_layout"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="23dp"
                     android:layout_marginRight="10dp"
                     android:layout_height="wrap_content">
                     <TextView
@@ -91,7 +87,7 @@
                     android:id="@+id/vehicle_city_layout"
                     android:layout_below="@+id/vehicle_reg_number_layout"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="23dp"
                     android:layout_height="wrap_content">
                     <TextView
                         android:layout_width="match_parent"
@@ -115,7 +111,7 @@
                     android:id="@+id/vehicle_type_layout"
                     android:layout_below="@+id/vehicle_city_layout"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="23dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_height="wrap_content">
@@ -141,7 +137,7 @@
                     android:id="@+id/vehicle_created_at_layout"
                     android:layout_below="@+id/vehicle_type_layout"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_height="wrap_content">
@@ -168,7 +164,7 @@
                     android:id="@+id/vehicle_last_updated_at_layout"
                     android:layout_below="@+id/vehicle_created_at_layout"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_height="wrap_content">
@@ -195,8 +191,8 @@
                     android:id="@+id/vehicle_shared_count_layout"
                     android:layout_below="@+id/vehicle_last_updated_at_layout"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_marginRight="10dp"
                     android:layout_height="wrap_content">
                     <TextView
@@ -215,25 +211,19 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/fontSize"/>
                 </LinearLayout>
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_below="@+id/vehicle_shared_count_layout">
-                    <Button
-                        android:layout_width="125dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="10dp"
-                        android:background="@drawable/shape"
-                        android:backgroundTint="@color/colorPrimary"
-                        android:text="Start Share"
-                        android:id="@+id/start_share_button"
-                        android:textAllCaps="false"
-                        android:textSize="12dp"
-                        android:textColor="@color/colorWhite"
-                        android:layout_marginBottom="10dp"/>
-                </RelativeLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/right_arrow_login_signup"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/start_share_button"
+                    android:layout_marginBottom="10dp"/>
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.CardView>

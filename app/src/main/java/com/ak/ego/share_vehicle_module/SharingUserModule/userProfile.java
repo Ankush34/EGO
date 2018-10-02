@@ -17,7 +17,16 @@ public class userProfile {
     public String provider_ride_user_id;
     public String provider_ride_id;
     public String ride_cost;
+    public String time_to_reach;
 
+
+    public String getTime_to_reach() {
+        return time_to_reach;
+    }
+
+    public void setTime_to_reach(String time_to_reach) {
+        this.time_to_reach = time_to_reach;
+    }
 
     public String getRide_cost() {
         return ride_cost;

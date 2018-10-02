@@ -235,6 +235,7 @@ public class start_share_service_activity extends AppCompatActivity implements O
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+
         RelativeLayout layout_show_user_track_locations = (RelativeLayout)findViewById(R.id.route_selection_recycler_layout);
         back_select_travel_route = (ImageView)findViewById(R.id.back_select_travel_route);
         back_select_travel_route.setOnClickListener(new View.OnClickListener() {
@@ -667,7 +668,7 @@ public class start_share_service_activity extends AppCompatActivity implements O
         }
         else
         {
-            intent.putExtra("vehicle_id",getIntent().getExtras().getString("user_id"));
+            intent.putExtra("user_id",getIntent().getExtras().getString("user_id"));
         }
 
         intent.putExtra("bearer_token",appConfig.getBearerToken());

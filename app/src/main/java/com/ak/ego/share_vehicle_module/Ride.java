@@ -1,11 +1,15 @@
 package com.ak.ego.share_vehicle_module;
 
+import java.util.ArrayList;
+
 public class Ride {
     public String start_location;
     public String end_location;
     public String count_of_occupants;
     public String time_of_travel;
     public String ride_total_amount;
+    public ArrayList<Ride> seeker_rides_in_a_provider_ride = new ArrayList<>();
+
     public String getStart_location() {
         return start_location;
     }

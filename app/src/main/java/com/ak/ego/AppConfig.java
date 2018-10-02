@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AppConfig {
-    public static String url_base = "http://119340f7.ngrok.io";
+    public static String url_base = "http://6523f000.ngrok.io";
     public static String signup_url = url_base+"/users/create_user_from_api";
     public static String login_url = url_base+"/users/sign_in.json";
     public static String get_all_users = url_base+"/users.json";
@@ -16,6 +16,7 @@ public class AppConfig {
     public static String get_seeker_rides_url = url_base+"/seeker_rides.json?provider_ride_id=";
     public static String create_seeker_ride_url = url_base+"/seeker_rides.json";
     public static String create_provider_ride_url = url_base+"/provider_rides"+".json";
+    public static String get_provider_rides = url_base+"/provider_rides"+".json";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private static String PREF_NAME = "Khurana_sales_pref";

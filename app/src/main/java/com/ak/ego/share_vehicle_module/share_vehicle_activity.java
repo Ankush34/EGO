@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -95,10 +97,6 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
 
     /* config of the drawer which is visible on sliding on the screen  */
 
-    private DrawerLayout mDrawer;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private TextView drawer_name;
-    private android.support.v7.widget.Toolbar toolbar;
 
     /* ------- */
 
@@ -190,9 +188,6 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
             recycler_provided_shared_rides_info.setAdapter(shared_rides_info_adapter);
             recycler_provided_shared_rides_info.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
             recycler_provided_shared_rides_info.setHasFixedSize(true);
-            rides.add(new Ride());
-            rides.add(new Ride());
-            rides.add(new Ride());
             shared_rides_info_adapter.notifyDataSetChanged();
             /* ----------------------- */
 
@@ -201,25 +196,25 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
 
         /* this code add the side bar and tool bar to the activity */
 
-        drawer_name = (TextView)findViewById(R.id.drawer_name);
-        drawer_name.setText("Ankush Khurana");
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            final ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setDisplayShowHomeEnabled(true);
-                actionBar.setDisplayShowTitleEnabled(true);
-                actionBar.setDisplayUseLogoEnabled(false);
-                actionBar.setHomeButtonEnabled(true);
-            }
-        }
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
-        mDrawer.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+//        drawer_name = (TextView)findViewById(R.id.drawer_name);
+//        drawer_name.setText("Ankush Khurana");
+//
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            final ActionBar actionBar = getSupportActionBar();
+//            if (actionBar != null) {
+//                actionBar.setDisplayHomeAsUpEnabled(true);
+//                actionBar.setDisplayShowHomeEnabled(true);
+//                actionBar.setDisplayShowTitleEnabled(true);
+//                actionBar.setDisplayUseLogoEnabled(false);
+//                actionBar.setHomeButtonEnabled(true);
+//            }
+//        }
+//        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
+//        mDrawer.addDrawerListener(mDrawerToggle);
+//        mDrawerToggle.syncState();
 
         /* -------------- */
 
@@ -452,6 +447,12 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
             }
         });
         /* ------- */
+
+        /* get all the rides done by the user */
+
+          new get_provider_rides().execute();
+
+        /* ----------------------- */
     }
 
 
@@ -897,4 +898,66 @@ public class share_vehicle_activity extends AppCompatActivity implements Locatio
         }
     }
     /* ------------- */
+
+    /* get all provider rides of this user */
+
+    public class get_provider_rides extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            JsonArrayRequest request = new JsonArrayRequest(AppConfig.get_provider_rides, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Toast.makeText(getApplicationContext()  ,""+response.toString(),Toast.LENGTH_SHORT).show();
+                    Geocoder geocoder = new Geocoder(getApplicationContext());
+                    if(response.length() > 0)
+                    {
+                        rides.clear();
+                        shared_rides_info_adapter.notifyDataSetChanged();
+                        try {
+                            for(int  i = 0; i < response.length() ; i++)
+                            {
+                                JSONObject provider_ride =response.getJSONObject(i);
+                                Ride ride = new Ride();
+                                List<Address> addresses = geocoder.getFromLocation(Double.parseDouble(provider_ride.getString("start_location_latitude")),Double.parseDouble(provider_ride.getString("start_location_longitude")),1);
+                                ride.setStart_location(addresses.get(0).getAddressLine(0));
+                                List<Address> addresses_end = geocoder.getFromLocation(Double.parseDouble(provider_ride.getString("end_location_latitude")),Double.parseDouble(provider_ride.getString("end_location_longitude")),1);
+                                ride.setEnd_location(addresses_end.get(0).getAddressLine(0));
+                                ride.setCount_of_occupants("4");
+                                ride.setRide_total_amount("1200");
+                                ride.setTime_of_travel("1 hr 40 min");
+                                rides.add(ride);
+                                shared_rides_info_adapter.notifyDataSetChanged();
+                            }
+                        }catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Your first ride it seems all the best !",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("Volley Error",error.toString());
+                }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization","Bearer " + appConfig.getBearerToken());
+                    return params;
+                }
+            };
+            AppController.getInstance().addToRequestQueue(request);
+            return  null;
+        }
+    }
+
+    /* ----------------------------- */
 }
